@@ -1,4 +1,4 @@
-package io.github.tozyf.versions
+package io.github.tozyf.version
 
 @Suppress("ObjectPropertyName")
 object Versions {
