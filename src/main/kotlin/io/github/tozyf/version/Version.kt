@@ -30,7 +30,7 @@ public interface Version : Comparable<Version> {
 
 /**
  * Creates an instance of [Version] from the given [versionString]. The created instance is immutable and has no
- * special meaning (has no scheme applied).
+ * special meaning (has no special format).
  *
  * The comparison of two versions is based on the lexicographic order of their string representations.
  */
