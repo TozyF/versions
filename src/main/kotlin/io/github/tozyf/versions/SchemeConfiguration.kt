@@ -17,21 +17,21 @@
 package io.github.tozyf.versions
 
 /**
- * Represents a scheme for parsing and formatting versions.
+ * Represents the configuration of a [VersionScheme].
  */
-public interface VersionScheme {
+public interface SchemeConfiguration {
     /**
-     * The configuration of the scheme.
+     * The delimiter used to separate numeric segments in the version string.
      */
-    public val configuration: SchemeConfiguration
+    public val numericSegmentDelimiter: Char
 
     /**
-     * Parses the given [value] and returns an instance of [Version].
+     * The delimiter used to separate the qualifier segment in the version string.
      */
-    public fun parse(value: String): Version
+    public val qualifierSegmentDelimiter: Char
 
     /**
-     * Formats the given [version] and returns its string representation.
+     * Whether the [Version.patch] segment is trimmed if it is zero.
      */
-    public fun format(version: Version): String
+    public val trimZeroPatchSegment: Boolean
 }
