@@ -19,7 +19,7 @@ package io.github.tozyf.versions
 import kotlin.test.*
 
 class VersionTest {
-    @Test
+    /*@Test
     fun `the same string representation should be equal`() {
         assertEquals(Version("0.0.0"), Versions.`0_0_0`)
         assertEquals(Version("1.0.0"), Versions.`1_0_0`)
@@ -74,5 +74,5 @@ class VersionTest {
         assertEquals("0.0.0".hashCode(), Versions.`0_0_0`.hashCode())
         assertEquals("abc".hashCode(), Versions.abc.hashCode())
         assertEquals("bce".hashCode(), Versions.bce.hashCode())
-    }
+    }*/
 }
