@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.tozyf.version
+package io.github.tozyf.versions
 
 @Suppress("ObjectPropertyName")
 object Versions {
