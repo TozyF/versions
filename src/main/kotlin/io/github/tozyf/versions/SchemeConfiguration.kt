@@ -35,3 +35,46 @@ public interface SchemeConfiguration {
      */
     public val trimZeroPatchSegment: Boolean
 }
+
+/**
+ * Creates an instance of [SchemeConfiguration].
+ *
+ * @param numericSegmentDelimiter The delimiter used to separate numeric segments in the version string.
+ * Default is '`.`'.
+ * @param qualifierSegmentDelimiter The delimiter used to separate the qualifier segment in the version string.
+ * Default is '`-`'.
+ * @param trimZeroPatchSegment Whether the [Version.patch] segment is trimmed if it is zero. Default is `true`.
+ */
+public fun SchemeConfiguration(
+    numericSegmentDelimiter: Char = '.',
+    qualifierSegmentDelimiter: Char = '-',
+    trimZeroPatchSegment: Boolean = true,
+): SchemeConfiguration = SchemeConfigurationImpl(
+    numericSegmentDelimiter,
+    qualifierSegmentDelimiter,
+    trimZeroPatchSegment,
+)
+
+private class SchemeConfigurationImpl(
+    override val numericSegmentDelimiter: Char,
+    override val qualifierSegmentDelimiter: Char,
+    override val trimZeroPatchSegment: Boolean,
+) : SchemeConfiguration {
+    override fun toString(): String = "SchemeConfigurationImpl(numericSegmentDelimiter=$numericSegmentDelimiter, " +
+            "qualifierSegmentDelimiter=$qualifierSegmentDelimiter, trimZeroPatchSegment=$trimZeroPatchSegment)"
+
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other !is SchemeConfigurationImpl -> false
+        numericSegmentDelimiter != other.numericSegmentDelimiter -> false
+        qualifierSegmentDelimiter != other.qualifierSegmentDelimiter -> false
+        else -> trimZeroPatchSegment == other.trimZeroPatchSegment
+    }
+
+    override fun hashCode(): Int {
+        var result = numericSegmentDelimiter.hashCode()
+        result = 31 * result + qualifierSegmentDelimiter.hashCode()
+        result = 31 * result + trimZeroPatchSegment.hashCode()
+        return result
+    }
+}

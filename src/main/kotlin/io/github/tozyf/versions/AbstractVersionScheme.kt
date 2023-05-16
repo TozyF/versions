@@ -19,13 +19,14 @@ package io.github.tozyf.versions
 /**
  * An abstract implementation of [VersionScheme].
  */
-public abstract class AbstractVersionScheme(override val configuration: SchemeConfiguration) : VersionScheme {
+public abstract class AbstractVersionScheme<V : AbstractVersion>(override val configuration: SchemeConfiguration) :
+    VersionScheme<V> {
     /**
-     * Creates a new instance of [Version] with the given [major], [minor], [patch] and [qualifier].
+     * Creates a new instance of [V] with the given [major], [minor], [patch] and [qualifier].
      */
-    protected abstract fun newVersionInstance(major: Int, minor: Int, patch: Int, qualifier: String): Version
+    protected abstract fun newVersionInstance(major: Int, minor: Int, patch: Int, qualifier: String): V
 
-    override fun parse(value: String): Version {
+    override fun parse(value: String): V {
         if (value.isBlank()) {
             throw VersionParseException("Version cannot be blank")
         }
@@ -66,7 +67,7 @@ public abstract class AbstractVersionScheme(override val configuration: SchemeCo
         return newVersionInstance(major, minor, patch, scanner.remaining())
     }
 
-    override fun format(version: Version): String = buildString {
+    override fun format(version: V): String = buildString {
         append(version.major)
         append(configuration.numericSegmentDelimiter)
         append(version.minor)

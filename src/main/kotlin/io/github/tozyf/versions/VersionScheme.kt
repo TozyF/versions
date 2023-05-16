@@ -19,23 +19,23 @@ package io.github.tozyf.versions
 /**
  * Represents a scheme for parsing and formatting versions.
  */
-public interface VersionScheme {
+public interface VersionScheme<V : Version> {
     /**
      * The configuration of the scheme.
      */
     public val configuration: SchemeConfiguration
 
     /**
-     * Parses the given [value] and returns an instance of [Version].
+     * Parses the given [value] and returns an instance of [V].
      *
      * @throws VersionParseException if the given [value] cannot be parsed
      */
-    public fun parse(value: String): Version
+    public fun parse(value: String): V
 
     /**
      * Formats the given [version] and returns its string representation.
      */
-    public fun format(version: Version): String
+    public fun format(version: V): String
 }
 
 /**

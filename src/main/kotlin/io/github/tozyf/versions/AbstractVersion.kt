@@ -24,7 +24,7 @@ public abstract class AbstractVersion(
     final override val minor: Int,
     final override val patch: Int,
     final override val qualifier: String,
-    final override val scheme: VersionScheme,
+    final override val scheme: VersionScheme<Version>,
 ) : Version {
     private val version: Int = versionOf(major, minor, patch)
 
