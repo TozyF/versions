@@ -53,3 +53,11 @@ public interface Version : Comparable<Version> {
      */
     public override fun toString(): String
 }
+
+/**
+ * Parses the given [value] and returns an instance of [Version] with the [GenericScheme].
+ *
+ * @see GenericVersion
+ * @see GenericScheme.parse
+ */
+public fun Version(value: String): Version = GenericVersion(value)
