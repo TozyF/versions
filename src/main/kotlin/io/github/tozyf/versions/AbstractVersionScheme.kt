@@ -107,7 +107,7 @@ public abstract class AbstractVersionScheme<V : AbstractVersion>(override val co
 
         fun nextInt(): Int {
             if (hasInt()) {
-                throw VersionParseException("Unexpected digit \"${peek()}\" at position $pos")
+                throw VersionParseException("Unexpected digit '${peek()}' at position $pos")
             }
             var num = next().digitToInt()
             while (hasInt()) {
