@@ -27,6 +27,8 @@ public interface VersionScheme {
 
     /**
      * Parses the given [value] and returns an instance of [Version].
+     *
+     * @throws VersionParseException if the given [value] cannot be parsed
      */
     public fun parse(value: String): Version
 
@@ -35,3 +37,8 @@ public interface VersionScheme {
      */
     public fun format(version: Version): String
 }
+
+/**
+ * Exception thrown when parsing a version failed.
+ */
+public class VersionParseException(message: String) : Exception(message)
