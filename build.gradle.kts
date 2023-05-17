@@ -8,6 +8,7 @@ fun properties(key: String): Provider<String> = providers.gradleProperty(key)
 plugins {
     `java-library`
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlinx.kover)
 }
 
 version = properties("version").get()
