@@ -39,7 +39,7 @@ tasks {
     }
 
     register<Jar>("sourcesJar") {
-        from(source)
+        from(sourceSets.main.map { it.allSource })
         archiveClassifier = "sources"
     }
 
