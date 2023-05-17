@@ -66,10 +66,10 @@ public class GenericSchemeBuilder internal constructor(scheme: GenericScheme) {
      *
      * `true` by default.
      */
-    public var zeroPatchSegmentTrimmed: Boolean = scheme.configuration.trimZeroPatchSegment
+    public var trimZeroPatchSegment: Boolean = scheme.configuration.trimZeroPatchSegment
 
     internal fun build(): SchemeConfiguration =
-        SchemeConfiguration(numericSegmentDelimiter, qualifierSegmentDelimiter, zeroPatchSegmentTrimmed)
+        SchemeConfiguration(numericSegmentDelimiter, qualifierSegmentDelimiter, trimZeroPatchSegment)
 }
 
 private class GenericSchemeImpl(configuration: SchemeConfiguration) : GenericScheme(configuration)

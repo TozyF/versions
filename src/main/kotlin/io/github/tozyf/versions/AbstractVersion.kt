@@ -38,6 +38,8 @@ public abstract class AbstractVersion(
         this === other -> 0
         other !is AbstractVersion -> version - versionOf(other.major, other.minor, other.patch)
         version != other.version -> version - other.version
+        qualifier.isEmpty() && other.qualifier.isNotEmpty() -> 1
+        qualifier.isNotEmpty() && other.qualifier.isEmpty() -> -1
         else -> qualifier.compareTo(other.qualifier)
     }
 

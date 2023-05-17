@@ -86,7 +86,7 @@ public abstract class AbstractVersionScheme<V : AbstractVersion>(override val co
     private enum class Token { NUMERIC_SEGMENT, QUALIFIER_SEGMENT, NUMERIC_DELIMITER, QUALIFIER_DELIMITER }
 
     private class Scanner(private val value: String, private val configuration: SchemeConfiguration) {
-        var startReadPos: Int = -1
+        private var startReadPos: Int = -1
         private var currentPos: Int = 0
         private var previousToken: Token? = null
 
