@@ -41,4 +41,8 @@ public interface VersionScheme<V : Version> {
 /**
  * Exception thrown when parsing a version failed.
  */
-public class VersionParseException(message: String) : Exception(message)
+public class VersionParseException : Exception {
+    public constructor(message: String?) : super(message)
+
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+}

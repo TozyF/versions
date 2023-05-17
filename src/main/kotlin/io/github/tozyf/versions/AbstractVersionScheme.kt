@@ -31,40 +31,33 @@ public abstract class AbstractVersionScheme<V : AbstractVersion>(override val co
             throw VersionParseException("Version cannot be blank")
         }
 
-        val scanner = Scanner(value)
-        val major = scanner.nextInt()
-        if (!scanner.hasDelimiter(configuration.numericSegmentDelimiter)) {
-            if (!scanner.hasDelimiter(configuration.qualifierSegmentDelimiter)) {
-                throw VersionParseException("Invalid version: $value")
+        val scanner = Scanner(value, configuration)
+        var major = 0
+        var minor = 0
+        var patch = 0
+        var qualifier = ""
+        var numericSegmentIndex = 1
+        try {
+            while (scanner.hasNext()) {
+                when (scanner.nextToken()) {
+                    Token.NUMERIC_SEGMENT -> {
+                        when (numericSegmentIndex++) {
+                            1 -> major = scanner.readInt()
+                            2 -> minor = scanner.readInt()
+                            3 -> patch = scanner.readInt()
+                            else -> throw VersionParseException("Must not have more than 3 numeric segments")
+                        }
+                    }
+
+                    Token.QUALIFIER_SEGMENT -> qualifier = scanner.readString()
+                    else -> {}
+                }
             }
-
-            scanner.skip()
-            return newVersionInstance(major, 0, 0, scanner.remaining())
+        } catch (throwable: Throwable) {
+            throw VersionParseException("Invalid version: $value", throwable)
         }
 
-        scanner.skip()
-        val minor = scanner.nextInt()
-        if (!scanner.hasDelimiter(configuration.numericSegmentDelimiter)) {
-            if (!scanner.hasDelimiter(configuration.qualifierSegmentDelimiter)) {
-                throw VersionParseException("Invalid version: $value")
-            }
-
-            scanner.skip()
-            return newVersionInstance(major, minor, 0, scanner.remaining())
-        }
-
-        scanner.skip()
-        val patch = scanner.nextInt()
-        if (scanner.hasDelimiter(configuration.numericSegmentDelimiter)) {
-            throw VersionParseException("Segment fourth must be qualifier")
-        }
-
-        if (!scanner.hasDelimiter(configuration.qualifierSegmentDelimiter)) {
-            return newVersionInstance(major, minor, patch, "")
-        }
-
-        scanner.skip()
-        return newVersionInstance(major, minor, patch, scanner.remaining())
+        return newVersionInstance(major, minor, patch, qualifier)
     }
 
     override fun format(version: V): String = buildString {
@@ -90,34 +83,80 @@ public abstract class AbstractVersionScheme<V : AbstractVersion>(override val co
         append(version.qualifier)
     }
 
-    private class Scanner(private val value: String) {
-        var pos: Int = 0
+    private enum class Token { NUMERIC_SEGMENT, QUALIFIER_SEGMENT, NUMERIC_DELIMITER, QUALIFIER_DELIMITER }
 
-        fun hasNext(): Boolean = pos < value.length
+    private class Scanner(private val value: String, private val configuration: SchemeConfiguration) {
+        var startReadPos: Int = -1
+        private var currentPos: Int = 0
+        private var previousToken: Token? = null
 
-        fun hasInt(): Boolean = hasNext() && peek().isDigit()
+        private fun hasInt(): Boolean = hasNext() && peek() in DIGIT_CHAR_RANGES
 
-        fun next(): Char = value[pos++]
+        private fun peek(): Char = value[currentPos]
 
-        fun peek(): Char = value[pos]
+        private fun next() = ++currentPos
 
-        fun skip() {
-            pos++
+        private fun end() {
+            currentPos = value.length
         }
 
-        fun nextInt(): Int {
-            if (hasInt()) {
-                throw VersionParseException("Unexpected digit '${peek()}' at position $pos")
-            }
-            var num = next().digitToInt()
-            while (hasInt()) {
-                num = num * 10 + next().digitToInt()
+        fun hasNext(): Boolean = currentPos < value.length
+
+        fun readString(): String {
+            check(startReadPos != -1) { "No string to read" }
+            return value.substring(startReadPos, currentPos)
+        }
+
+        fun readInt(): Int {
+            check(startReadPos != -1) { "No int to read" }
+            var num = 0
+            for (i in startReadPos until currentPos) {
+                num = num * 10 + value[i].digitToInt()
             }
             return num
         }
 
-        fun hasDelimiter(delimiter: Char): Boolean = hasNext() && peek() == delimiter
+        private fun expectedPreviousToken(token: Token) =
+            check(previousToken == token) { "Expected $token, but got $previousToken" }
 
-        fun remaining(): String = value.substring(pos)
+        fun nextToken(): Token {
+            check(hasNext()) { "No more tokens" }
+            startReadPos = currentPos
+            return when (peek()) {
+                configuration.numericSegmentDelimiter -> {
+                    expectedPreviousToken(Token.NUMERIC_SEGMENT)
+                    next()
+                    Token.NUMERIC_DELIMITER
+                }
+
+                configuration.qualifierSegmentDelimiter -> {
+                    expectedPreviousToken(Token.NUMERIC_SEGMENT)
+                    next()
+                    Token.QUALIFIER_DELIMITER
+                }
+
+                in DIGIT_CHAR_RANGES -> {
+                    while (hasInt()) {
+                        next()
+                    }
+                    Token.NUMERIC_SEGMENT
+                }
+
+                else -> {
+                    if (previousToken == Token.NUMERIC_SEGMENT) {
+                        end()
+                        return Token.QUALIFIER_SEGMENT
+                    }
+
+                    expectedPreviousToken(Token.QUALIFIER_DELIMITER)
+                    end()
+                    Token.QUALIFIER_SEGMENT
+                }
+            }.also { previousToken = it }
+        }
+
+        companion object {
+            val DIGIT_CHAR_RANGES = '0'..'9'
+        }
     }
 }
