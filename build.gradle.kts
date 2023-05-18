@@ -60,7 +60,7 @@ publishing {
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
                 username = properties("sonatype.user").get()
-                username = properties("sonatype.password").get()
+                password = properties("sonatype.password").get()
             }
         }
     }
